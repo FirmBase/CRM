@@ -1,0 +1,14 @@
+/* Initialize the counter on the table body */
+.table-autonumber tbody {
+	counter-reset: rowNumber;
+}
+
+/* Increment the counter for every row */
+.table-autonumber tbody tr {
+	counter-increment: rowNumber;
+}
+
+/* Insert the counter value into the first cell of each row */
+.table-autonumber tbody tr td:first-child::before {
+	content: counter(rowNumber);
+}

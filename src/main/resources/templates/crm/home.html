@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>CRM</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+		<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}" type="text/javascript" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+		<script th:src="@{/jQuery/js/jquery-4.0.0.min.js}" type="text/javascript" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+
+		<link th:href="@{/datatable/css/datatables.min.css}" rel="stylesheet" />
+		<script th:src="@{/datatable/js/datatables.min.js}" type="text/javascript"></script>
+
+		<link th:href="@{/css/table.css}" rel="stylesheet" />
+		<script th:src="@{/js/toasts-notification.js}" type="text/javascript"></script>
+		<script th:inline="javascript" type="text/javascript">
+			function addNew(form) {
+				let data = {};
+				[].forEach.call(form.parentElement.parentElement.getElementsByTagName("input"), function(input) {
+					if (input.type == "checkbox")
+						data[input.name] = input.checked;
+					else
+						data[input.name] = input.value;
+				});
+				const xhttp = new XMLHttpRequest();
+				xhttp.open("POST", "update", true);
+				xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				xhttp.onreadystatechange = function() {
+					if (this.readyState >= 4 && this.status == 200) {
+						console.log(this.responseText);
+						if (this.responseText == "true")
+							displayToast("Success", "Content updated.");
+						else
+							displayToast("Failure", "Content not update");
+					}
+				};
+				xhttp.send(new URLSearchParams(data).toString());
+				return false;
+			}
+		</script>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<!--
+			<div class="row">
+				<form action="" enctype="application/x-www-form-urlencoded" method="post">
+					<table class="table-autonumber table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th scope="col" rowspan="2">S.No.</th>
+								<th scope="col" rowspan="2">Record Date</th>
+								<th scope="col" rowspan="2">Customer</th>
+								<th scope="col" rowspan="2">Institution</th>
+								<th scope="col" rowspan="2">Products/Components</th>
+								<th scope="col" rowspan="2">Quantity</th>
+								<th scope="col" rowspan="2">Price</th>
+								<th scope="col" rowspan="2">Amount</th>
+								<th scope="col" colspan="2">Customer contact</th>
+								<th scope="col" rowspan="2">Due</th>
+								<th scope="col" rowspan="2">Salesman</th>
+								<th scope="col" colspan="2">Order</th>
+								<th scope="col" rowspan="2">Last update</th>
+								<th scope="col" rowspan="2">Update remarks</th>
+							</tr>
+							<tr>
+								<th scope="col">Phone</th>
+								<th scope="col">Email</th>
+								<th scope="col">Received</th>
+								<th scope="col">Completed</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="inquiry: ${inquiries}">
+								<td scope="row">
+									<input type="hidden" name="inquiry-id" th:value="${inquiry.id}" />
+								</td>
+								<td th:text="${#dates.format(inquiry.recordedAt, 'dd-MMM-yyyy')}"></td>
+								<td th:text="${inquiry.customerName}"></td>
+								<td th:text="${inquiry.institution}"></td>
+								<td th:text="${inquiry.productsOrComponents}"></td>
+								<td th:text="${inquiry.quantity}"></td>
+								<td th:text="${inquiry.price}"></td>
+								<td th:text="${inquiry.quantity * inquiry.price}"></td>
+								<td th:text="${inquiry.customerNumber}"></td>
+								<td th:text="${inquiry.customerEmail}"></td>
+								<td th:text="${#dates.format(inquiry.dueDate, 'dd-MMM-yyyy')}"></td>
+								<td th:text="${inquiry.salesmanName}"></td>
+								<td>
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" value="" th:id="${'order_received_' + inquiry.id}" th:checked="${inquiry.orderReceived}" />
+										<label class="form-check-label" th:for="${'order_received_' + inquiry.id}">Order received</label>
+									</div>
+								</td>
+								<td>
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" value="" th:id="${'order_completed_' + inquiry.id}" th:checked="${inquiry.orderCompleted}" />
+										<label class="form-check-label" th:for="${'order_completed_' + inquiry.id}">Order completed</label>
+									</div>
+								</td>
+								<td th:text="${#dates.format(inquiry.lastUpdate, 'dd-MMM-yyyy')}"></td>
+								<td th:text="${inquiry.lastUpdateRemark}"></td>
+							</tr>
+							<tr>
+								<td colspan="16">
+									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</form>
+			</div>
+			-->
+			<div class="row">
+				<div class="col-12 table-responsive">
+					<table class="table border table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th scope="col" rowspan="2">S.No.</th>
+								<th scope="col" rowspan="2">Record Date</th>
+								<th scope="col" rowspan="2">Customer</th>
+								<th scope="col" rowspan="2">Institution</th>
+								<th scope="col" rowspan="2">Products/Components</th>
+								<th scope="col" rowspan="2">Quantity</th>
+								<th scope="col" rowspan="2">Price</th>
+								<th scope="col" rowspan="2">Amount</th>
+								<th scope="col" colspan="2">Customer contact</th>
+								<th scope="col" rowspan="2">Due</th>
+								<th scope="col" rowspan="2">Salesman</th>
+								<th scope="col" colspan="2">Order</th>
+								<th scope="col" rowspan="2">Last update</th>
+								<th scope="col" rowspan="2">Update remarks</th>
+								<th scope="col" rowspan="2">Action</th>
+							</tr>
+							<tr>
+								<th scope="col">Phone</th>
+								<th scope="col">Email</th>
+								<th scope="col">Received</th>
+								<th scope="col">Completed</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="inquiry: ${inquiries}">
+								<td scope="row">
+									<input type="hidden" name="inquiry-id" th:value="${inquiry.id}" />
+								</td>
+								<td th:text="${#dates.format(inquiry.recordedAt, 'dd-MMM-yyyy')}"></td>
+								<td th:text="${inquiry.customerName}"></td>
+								<td th:text="${inquiry.institution}"></td>
+								<td th:text="${inquiry.productsOrComponents}"></td>
+								<td th:text="${inquiry.quantity}"></td>
+								<td th:text="${inquiry.price}"></td>
+								<td th:text="${inquiry.quantity * inquiry.price}"></td>
+								<td th:text="${inquiry.customerNumber}"></td>
+								<td th:text="${inquiry.customerEmail}"></td>
+								<td th:text="${#dates.format(inquiry.dueDate, 'dd-MMM-yyyy')}"></td>
+								<td th:text="${inquiry.salesmanName}"></td>
+								<td>
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" name="inquiry-order-received" value="" th:id="${'order_received_' + inquiry.id}" th:checked="${inquiry.orderReceived}" />
+										<label class="form-check-label" th:for="${'order_received_' + inquiry.id}">Order received</label>
+									</div>
+								</td>
+								<td>
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" name="inquiry-order-completed" value="" th:id="${'order_completed_' + inquiry.id}" th:checked="${inquiry.orderCompleted}" />
+										<label class="form-check-label" th:for="${'order_completed_' + inquiry.id}">Order completed</label>
+									</div>
+								</td>
+								<td th:text="${#dates.format(inquiry.lastUpdate, 'dd-MMM-yyyy')}"></td>
+								<td>
+									<div class="form-floating">
+										<input type="text" name="inquiry-last-remark" class="form-control" th:id="${'last_update_remark_' + inquiry.id}" placeholder="Remark" aria-placeholder="Remark" th:value="${inquiry.lastUpdateRemark}" />
+										<label th:for="${'last_update_remark_' + inquiry.id}">Last Remark</label>
+									</div>
+								</td>
+								<td>
+									<!-- <form action="" enctype="application/x-www-form-urlencoded" method="post" onsubmit="return "> -->
+										<button type="button" class="btn" onclick="addNew(this);">
+											<img th:src="@{/GoogleFonts/svg/upgrade_24dp_1F1F1F.svg}" alt="Update" />
+										</button>
+									<form action="delete" enctype="application/x-www-form-urlencoded" method="post">
+										<input type="hidden" name="inquiry-id" th:value="${inquiry.id}" />
+										<button type="submit" class="btn">
+											<img th:src="@{/GoogleFonts/svg/delete_24dp_1F1F1F.svg}" alt="Delete" />
+										</button>
+									</form>
+									<!-- </form> -->
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<script type="text/javascript">
+						const dataTable = new DataTable(window.document.querySelectorAll("table"), {
+							aaSorting: [], // Default sorting false
+							info: true,
+							ordering: true,
+							paging: false,
+							searching: true,
+							responsive: true,
+							destroy: false,
+							fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+								var index = iDisplayIndexFull + 1;
+								$("td:first", nRow).html($("td:first", nRow).html() + index);
+								return nRow;
+							},
+							stripeClasses: [],
+							footer: true
+						});
+					</script>
+				</div>
+			</div>
+			<div class="row">
+				<div class="offset-11 col-1">
+					<button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add New</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<form id="crmInquiryForm" action="new" enctype="application/x-www-form-urlencoded" method="post">
+									<div class="row g-3">
+										<!-- ID -->
+										<div class="col-md-3">
+											<label for="id" class="form-label"></label>
+											<input type="hidden" class="form-control" id="id" name="id" readonly />
+										</div>
+										<!-- Recorded At -->
+										<!--
+										<div class="col-md-3">
+											<label for="recordedAt" class="form-label">Recorded At</label>
+											<input type="date" class="form-control" id="recordedAt" name="recordedAt" />
+										</div>
+										-->
+										<!-- Due Date -->
+										<div class="col-md-3">
+											<label for="dueDate" class="form-label">Due Date</label>
+											<input type="date" class="form-control" id="dueDate" name="dueDate" />
+										</div>
+										<!-- Last Update -->
+										<!--
+										<div class="col-md-3">
+											<label for="lastUpdate" class="form-label">Last Update</label>
+											<input type="date" class="form-control" id="lastUpdate" name="lastUpdate" />
+										</div>
+										-->
+										<!-- Institution -->
+										<div class="col-md-6">
+											<label for="institution" class="form-label">Institution</label>
+											<input type="text" class="form-control" id="institution" name="institution" />
+										</div>
+										<!-- Products -->
+										<div class="col-md-6">
+											<label for="productsOrComponents" class="form-label">Products / Components</label>
+											<input type="text" class="form-control" id="productsOrComponents" name="productsOrComponents" />
+										</div>
+										<!-- Quantity -->
+										<div class="col-md-3">
+											<label for="quantity" class="form-label">Quantity</label>
+											<input type="number" class="form-control" id="quantity" name="quantity" />
+										</div>
+										<!-- Price -->
+										<div class="col-md-3">
+											<label for="price" class="form-label">Price</label>
+											<input type="number" class="form-control" id="price" name="price" step="0.01" />
+										</div>
+										<!-- Salesman -->
+										<div class="col-md-6">
+											<label for="salesmanName" class="form-label">Salesman Name</label>
+											<input type="text" class="form-control" id="salesmanName" name="salesmanName" />
+										</div>
+										<!-- Customer Name -->
+										<div class="col-md-4">
+											<label for="customerName" class="form-label">Customer Name</label>
+											<input type="text" class="form-control" id="customerName" name="customerName" />
+										</div>
+										<!-- Customer Number -->
+										<div class="col-md-4">
+											<label for="customerNumber" class="form-label">Customer Number</label>
+											<input type="tel" class="form-control" id="customerNumber" name="customerNumber" />
+										</div>
+										<!-- Customer Email -->
+										<div class="col-md-4">
+											<label for="customerEmail" class="form-label">Customer Email</label>
+											<input type="email" class="form-control" id="customerEmail" name="customerEmail" />
+										</div>
+										<!-- Last Update Remark -->
+										<div class="col-12">
+											<label for="lastUpdateRemark" class="form-label">Last Update Remark</label>
+											<textarea class="form-control" id="lastUpdateRemark" name="lastUpdateRemark" rows="4" /></textarea>
+										</div>
+										<!-- Order Received -->
+										 <!--
+										<div class="col-md-3">
+											<div class="form-check mt-4">
+												<input class="form-check-input" type="checkbox" id="orderReceived" name="orderReceived" />
+												<label class="form-check-label" for="orderReceived">Order Received</label>
+											</div>
+										</div>
+										-->
+										<!-- Order Completed -->
+										 <!--
+										<div class="col-md-3">
+											<div class="form-check mt-4">
+												<input class="form-check-input" type="checkbox" id="orderCompleted" name="orderCompleted" />
+												<label class="form-check-label" for="orderCompleted">Order Completed</label>
+											</div>
+										</div>
+										-->
+									</div>
+									<div class="mt-4">
+										<button type="submit" class="btn btn-primary">Save Inquiry</button>
+										<button type="reset" class="btn btn-secondary">Reset</button>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary">Understood</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script th:inline="javascript" type="text/javascript">
+			function pollForNotifications() {
+				fetch("/notifications").then(response => response.text()).then(message => {
+					if (message != "timeout") {
+						if (Notification.permission.toLowerCase() == "granted") {
+							// alert("Notification: " + message);
+							displayToast("Notification", "Records are changed");
+						}
+					}
+				}).catch(() => {
+					setTimeout(pollForNotifications, 10000);
+				});
+			}
+			pollForNotifications();
+		</script>
+		<script th:inline="javascript" type="text/javascript" th:if="${message}">
+			/*<![CDATA[*/
+			// alert(/*[[${message}]]*/);
+			displayToast(/*[[${message}]]*/);
+			/*]]>*/
+		</script>
+		<div class="row">
+			<div th:replace="~{fragments/toasts :: toasts}"></div>
+		</div>
+	</body>
+</html>

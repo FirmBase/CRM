@@ -1,0 +1,69 @@
+package com.hlbs.crm.services;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hlbs.crm.controllers.NotificationController;
+import com.hlbs.crm.dtos.CRMInquiriesDTO;
+import com.hlbs.crm.entities.CRMInquiries;
+import com.hlbs.crm.repositories.CRMInquiriesRepositories;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class CRMService {
+	@Autowired
+	private CRMInquiriesRepositories crmInquiriesRepositories;
+
+	@Autowired
+	private NotificationController notificationController;
+
+	public List<CRMInquiriesDTO>getAllInquiries() {
+		final List<CRMInquiriesDTO> crmInquiriesDTOs = new ArrayList<CRMInquiriesDTO>();
+		crmInquiriesRepositories.findAll().forEach(crmInquiry -> {
+			final CRMInquiriesDTO crmInquiriesDTO = new CRMInquiriesDTO();
+			BeanUtils.copyProperties(crmInquiry, crmInquiriesDTO);
+			crmInquiriesDTOs.add(crmInquiriesDTO);
+		});
+		return crmInquiriesDTOs;
+	}
+
+	public List<CRMInquiriesDTO> getAllInquiriesByOrderByDueDateAsc() {
+		final List<CRMInquiriesDTO> crmInquiriesDTOs = new ArrayList<CRMInquiriesDTO>();
+		crmInquiriesRepositories.findAllByOrderByDueDateAsc().forEach(crmInquiry -> {
+			final CRMInquiriesDTO crmInquiriesDTO = new CRMInquiriesDTO();
+			BeanUtils.copyProperties(crmInquiry, crmInquiriesDTO);
+			crmInquiriesDTOs.add(crmInquiriesDTO);
+		});
+		return crmInquiriesDTOs;
+	}
+
+	public void addNewInquiry(final CRMInquiriesDTO crmInquiriesDTO) {
+		final CRMInquiries crmInquiries = new CRMInquiries();
+		BeanUtils.copyProperties(crmInquiriesDTO, crmInquiries);
+		crmInquiriesRepositories.saveAndFlush(crmInquiries);
+
+		notificationController.notifyClients("New inquiry added");
+	}
+
+	public void updateInquiry(final long inquiryId, final boolean inquiryOrderReceived, final boolean inquiryOrderCompleted, final String inquiryLastUpdateRemark) {
+		final CRMInquiries crmInquiries = crmInquiriesRepositories.findById(inquiryId).orElseThrow();
+		crmInquiries.setOrderReceived(inquiryOrderReceived);
+		crmInquiries.setOrderCompleted(inquiryOrderCompleted);
+		crmInquiries.setLastUpdateRemark(inquiryLastUpdateRemark);
+		crmInquiries.setLastUpdate(new Date());
+		crmInquiriesRepositories.saveAndFlush(crmInquiries);
+
+		notificationController.notifyClients("New inquiry added");
+	}
+
+	public void deleteInquiry(final long inquiryId) {
+		crmInquiriesRepositories.deleteById(inquiryId);
+	}
+}
