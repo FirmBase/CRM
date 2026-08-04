@@ -44,6 +44,26 @@ public class CRMService {
 		return crmInquiriesDTOs;
 	}
 
+	public List<CRMInquiriesDTO> getAllInquiryOrderByIncompleteDueDateAsc() {
+		final List<CRMInquiriesDTO> crmInquiriesDTOs = new ArrayList<CRMInquiriesDTO>();
+		crmInquiriesRepositories.getAllInquiryOrderByIncompleteDueDateAsc().forEach(crmInquiry -> {
+			final CRMInquiriesDTO crmInquiriesDTO = new CRMInquiriesDTO();
+			BeanUtils.copyProperties(crmInquiry, crmInquiriesDTO);
+			crmInquiriesDTOs.add(crmInquiriesDTO);
+		});
+		return crmInquiriesDTOs;
+	}
+
+	public List<CRMInquiriesDTO> getAllIncompleteInquiryOrderByDueDateAsc() {
+		final List<CRMInquiriesDTO> crmInquiriesDTOs = new ArrayList<CRMInquiriesDTO>();
+		crmInquiriesRepositories.getAllIncompleteInquiryOrderByDueDateAsc().forEach(crmInquiry -> {
+			final CRMInquiriesDTO crmInquiriesDTO = new CRMInquiriesDTO();
+			BeanUtils.copyProperties(crmInquiry, crmInquiriesDTO);
+			crmInquiriesDTOs.add(crmInquiriesDTO);
+		});
+		return crmInquiriesDTOs;
+	}
+
 	public void addNewInquiry(final CRMInquiriesDTO crmInquiriesDTO) {
 		final CRMInquiries crmInquiries = new CRMInquiries();
 		BeanUtils.copyProperties(crmInquiriesDTO, crmInquiries);
@@ -65,5 +85,7 @@ public class CRMService {
 
 	public void deleteInquiry(final long inquiryId) {
 		crmInquiriesRepositories.deleteById(inquiryId);
+
+		notificationController.notifyClients("Inquiry " + inquiryId + " deleted.");
 	}
 }

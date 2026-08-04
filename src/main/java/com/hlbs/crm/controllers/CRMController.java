@@ -30,7 +30,7 @@ public class CRMController {
 
 	@GetMapping(path = "")
 	public String crmHome(final Map<String, Object> attributes) {
-		attributes.put("inquiries", crmService.getAllInquiriesByOrderByDueDateAsc());
+		attributes.put("inquiries", crmService.getAllInquiryOrderByIncompleteDueDateAsc());
 		return "crm/home";
 	}
 
@@ -38,13 +38,12 @@ public class CRMController {
 	public String crmHome(@RequestParam("dueDate") @DateTimeFormat(pattern = "yyyy-MM-dd") final Date dueDate, @RequestParam("institution") final String institution, @RequestParam("productsOrComponents") final String productsOrComponents, @RequestParam("quantity") final int quantity, @RequestParam("price") final double price, @RequestParam("salesmanName") final String salesmanName, @RequestParam("customerName") final String customerName, @RequestParam("customerNumber") final String customerNumber, @RequestParam("customerEmail") final String customerEmail, @RequestParam("lastUpdateRemark") final String lastUpdateRemark, final RedirectAttributes redirectAttributes) {
 		final CRMInquiriesDTO crmInquiriesDTO = new CRMInquiriesDTO(null, new Date(), institution, productsOrComponents, quantity, price, customerName, customerNumber, customerEmail, dueDate, salesmanName, new Date(), lastUpdateRemark, false, false);
 
-		System.out.println("" + crmInquiriesDTO);
 		try {
 			crmService.addNewInquiry(crmInquiriesDTO);
 			redirectAttributes.addFlashAttribute("message", "New inquiry added");
 		}
 		catch (final DataAccessException dataAccessException) {
-			redirectAttributes.addFlashAttribute("message", "New Inquiry fail");
+			redirectAttributes.addFlashAttribute("message", "New inquiry fail");
 		}
 		return "redirect:/";
 	}

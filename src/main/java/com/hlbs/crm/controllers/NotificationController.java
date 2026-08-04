@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(path = "/notifications")
 @Slf4j
 public class NotificationController {
-	final private List<DeferredResult<String>> waitingRequests = new CopyOnWriteArrayList<DeferredResult<String>>();
+	private final List<DeferredResult<String>> waitingRequests = new CopyOnWriteArrayList<DeferredResult<String>>();
 
 	@GetMapping
 	public DeferredResult<String> poll() {

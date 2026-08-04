@@ -381,11 +381,12 @@
 			function pollForNotifications() {
 				fetch("/notifications").then(response => response.text()).then(message => {
 					if (message != "timeout") {
-						if (Notification.permission.toLowerCase() == "granted") {
-							// alert("Notification: " + message);
-							displayToast("Notification", "Records are changed");
+						if (window.Notification.permission.toLowerCase() == "granted") {
+							new window.Notification("Update from server!", {body: message});
+							displayToast("Update from server!", message);
 						}
 					}
+					pollForNotifications();
 				}).catch(() => {
 					setTimeout(pollForNotifications, 10000);
 				});
