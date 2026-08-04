@@ -3,7 +3,7 @@
 	<head>
 		<title>CRM</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
 		<link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
 		<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}" type="text/javascript" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
@@ -16,9 +16,44 @@
 		<link th:href="@{/css/table.css}" rel="stylesheet" />
 		<script th:src="@{/js/toasts-notification.js}" type="text/javascript"></script>
 		<script th:inline="javascript" type="text/javascript">
+			function checkInputs(form) {
+				[].forEach.call(form.getElementsByTagName("input"), function(input) {
+					if (input.name == "customer-number") {
+						if (input.value.length < 10) {
+							displayToast("Invalid field", "Check customer number.");
+							return false;
+						}
+					}
+				});
+				displayToast("Invalid fields", "Check values");
+				return true;
+			}
+			function dueDateCheck(input) {
+				try {
+					const dueDate = new Date(input.value);
+					const date = new Date();
+					dueDate.setHours(0, 0, 0, 0);	// Comparing date not time
+					date.setHours(0, 0, 0, 0);	// Comparing date not time
+					if (dueDate < date) {
+						input.value = date.toLocaleDateString("en-CA");
+						displayToast("Invalid field", "Due date seems to be before today.<br />Set again.");
+						return false;
+					}
+					else
+						return true;
+				}
+				catch (error) {
+					console.error(error);
+				}
+			}
+
+			function amountCalculation() {
+				window.document.getElementById("amount").value = parseInt(window.document.getElementById("quantity").value) * parseFloat(window.document.getElementById("price").value);
+			}
+
 			function addNew(form) {
 				let data = {};
-				[].forEach.call(form.parentElement.parentElement.getElementsByTagName("input"), function(input) {
+				[].forEach.call(form.parentElement.parentElement.parentElement.getElementsByTagName("input"), function(input) {
 					if (input.type == "checkbox")
 						data[input.name] = input.checked;
 					else
@@ -28,13 +63,16 @@
 				xhttp.open("POST", "update", true);
 				xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				xhttp.onreadystatechange = function() {
-					if (this.readyState >= 4 && this.status == 200) {
-						console.log(this.responseText);
-						if (this.responseText == "true")
-							displayToast("Success", "Content updated.");
+					if (this.readyState >= 4)
+						if (this.status == 200) {
+							console.log(this.responseText);
+							if (this.responseText == "true")
+								displayToast("Success", "Data updated.");
+							else
+								displayToast("Failure", "Data not update");
+						}
 						else
-							displayToast("Failure", "Content not update");
-					}
+							displayToast("Warning!", "Server didn't save data, try again.");
 				};
 				xhttp.send(new URLSearchParams(data).toString());
 				return false;
@@ -74,7 +112,7 @@
 						<tbody>
 							<tr th:each="inquiry: ${inquiries}">
 								<td scope="row">
-									<input type="hidden" name="inquiry-id" th:value="${inquiry.id}" />
+									<input type="hidden" name="inquiry-id" th:value="${inquiry.id}" readonly aria-readonly="true" />
 								</td>
 								<td th:text="${#dates.format(inquiry.recordedAt, 'dd-MMM-yyyy')}"></td>
 								<td th:text="${inquiry.customerName}"></td>
@@ -143,7 +181,7 @@
 						<tbody>
 							<tr th:each="inquiry: ${inquiries}">
 								<td scope="row">
-									<input type="hidden" name="inquiry-id" th:value="${inquiry.id}" />
+									<input type="hidden" name="inquiry-id" th:value="${inquiry.id}" readonly aria-readonly="true" />
 								</td>
 								<td th:text="${#dates.format(inquiry.recordedAt, 'dd-MMM-yyyy')}"></td>
 								<td th:text="${inquiry.customerName}"></td>
@@ -159,13 +197,13 @@
 								<td>
 									<div class="form-check">
 										<input class="form-check-input" type="checkbox" name="inquiry-order-received" value="" th:id="${'order_received_' + inquiry.id}" th:checked="${inquiry.orderReceived}" />
-										<label class="form-check-label" th:for="${'order_received_' + inquiry.id}">Order received</label>
+										<label class="form-check-label m-0" th:for="${'order_received_' + inquiry.id}"><!-- Order received --></label>
 									</div>
 								</td>
 								<td>
 									<div class="form-check">
 										<input class="form-check-input" type="checkbox" name="inquiry-order-completed" value="" th:id="${'order_completed_' + inquiry.id}" th:checked="${inquiry.orderCompleted}" />
-										<label class="form-check-label" th:for="${'order_completed_' + inquiry.id}">Order completed</label>
+										<label class="form-check-label m-0" th:for="${'order_completed_' + inquiry.id}"><!-- Order completed --></label>
 									</div>
 								</td>
 								<td th:text="${#dates.format(inquiry.lastUpdate, 'dd-MMM-yyyy')}"></td>
@@ -176,17 +214,19 @@
 									</div>
 								</td>
 								<td>
-									<!-- <form action="" enctype="application/x-www-form-urlencoded" method="post" onsubmit="return "> -->
-										<button type="button" class="btn" onclick="addNew(this);">
+									<div class="d-flex">
+										<!-- <form action="" enctype="application/x-www-form-urlencoded" method="post" onsubmit="return "> -->
+										<button type="button" class="btn m-0 p-0" onclick="addNew(this);">
 											<img th:src="@{/GoogleFonts/svg/upgrade_24dp_1F1F1F.svg}" alt="Update" />
 										</button>
-									<form action="delete" enctype="application/x-www-form-urlencoded" method="post">
-										<input type="hidden" name="inquiry-id" th:value="${inquiry.id}" />
-										<button type="submit" class="btn">
-											<img th:src="@{/GoogleFonts/svg/delete_24dp_1F1F1F.svg}" alt="Delete" />
-										</button>
-									</form>
-									<!-- </form> -->
+										<form action="delete" enctype="application/x-www-form-urlencoded" method="post">
+											<input type="hidden" name="inquiry-id" th:value="${inquiry.id}" readonly aria-readonly="true" />
+											<button type="submit" class="btn m-0 p-0">
+												<img th:src="@{/GoogleFonts/svg/delete_24dp_1F1F1F.svg}" alt="Delete" />
+											</button>
+										</form>
+										<!-- </form> -->
+									</div>
 								</td>
 							</tr>
 						</tbody>
@@ -218,20 +258,23 @@
 			</div>
 			<div class="row">
 				<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-					<div class="modal-dialog">
+					<div class="modal-dialog modal-lg">
 						<div class="modal-content">
 							<div class="modal-header">
 								<h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
-								<form id="crmInquiryForm" action="new" enctype="application/x-www-form-urlencoded" method="post">
+								<form id="crmInquiryForm" action="new" enctype="application/x-www-form-urlencoded" method="post" onsubmit="return checkInputs(this);">
+									<input type="hidden" class="form-control" id="id" name="id" readonly aria-readonly="true" />
 									<div class="row g-3">
 										<!-- ID -->
+										 <!--
 										<div class="col-md-3">
 											<label for="id" class="form-label"></label>
-											<input type="hidden" class="form-control" id="id" name="id" readonly />
+											<input type="hidden" class="form-control" id="id" name="id" readonly aria-readonly="true" />
 										</div>
+										-->
 										<!-- Recorded At -->
 										<!--
 										<div class="col-md-3">
@@ -242,7 +285,7 @@
 										<!-- Due Date -->
 										<div class="col-md-3">
 											<label for="dueDate" class="form-label">Due Date</label>
-											<input type="date" class="form-control" id="dueDate" name="dueDate" />
+											<input type="date" class="form-control" id="dueDate" name="dueDate" oninput="dueDateCheck(this);" />
 										</div>
 										<!-- Last Update -->
 										<!--
@@ -252,49 +295,54 @@
 										</div>
 										-->
 										<!-- Institution -->
-										<div class="col-md-6">
+										<div class="col-md-9">
 											<label for="institution" class="form-label">Institution</label>
-											<input type="text" class="form-control" id="institution" name="institution" />
+											<input type="text" class="form-control" id="institution" name="institution" maxlength="64" required aria-required="true" />
 										</div>
 										<!-- Products -->
 										<div class="col-md-6">
-											<label for="productsOrComponents" class="form-label">Products / Components</label>
-											<input type="text" class="form-control" id="productsOrComponents" name="productsOrComponents" />
+											<label for="lastUpdateRemark" class="form-label">Last Update Remark</label>
+											<input type="text" class="form-control" id="lastUpdateRemark" name="lastUpdateRemark" maxlength="32" />
 										</div>
 										<!-- Quantity -->
 										<div class="col-md-3">
 											<label for="quantity" class="form-label">Quantity</label>
-											<input type="number" class="form-control" id="quantity" name="quantity" />
+											<input type="number" class="form-control" id="quantity" name="quantity" step="1" min="0" onkeypress="amountCalculation();" onblur="amountCalculation();" value="0" required aria-required="true" />
 										</div>
 										<!-- Price -->
 										<div class="col-md-3">
 											<label for="price" class="form-label">Price</label>
-											<input type="number" class="form-control" id="price" name="price" step="0.01" />
+											<input type="number" class="form-control" id="price" name="price" step="0.01" min="0" onkeypress="amountCalculation();" onblur="amountCalculation();" value="0" required aria-required="true" />
 										</div>
 										<!-- Salesman -->
 										<div class="col-md-6">
 											<label for="salesmanName" class="form-label">Salesman Name</label>
-											<input type="text" class="form-control" id="salesmanName" name="salesmanName" />
+											<input type="text" class="form-control" id="salesmanName" name="salesmanName" maxlength="32" required aria-required="true" />
 										</div>
 										<!-- Customer Name -->
-										<div class="col-md-4">
+										<div class="col-md-6">
 											<label for="customerName" class="form-label">Customer Name</label>
-											<input type="text" class="form-control" id="customerName" name="customerName" />
+											<input type="text" class="form-control" id="customerName" name="customerName" maxlength="32" />
 										</div>
 										<!-- Customer Number -->
 										<div class="col-md-4">
 											<label for="customerNumber" class="form-label">Customer Number</label>
-											<input type="tel" class="form-control" id="customerNumber" name="customerNumber" />
+											<input type="tel" class="form-control" id="customerNumber" name="customerNumber" minlength="13" maxlength="16" />
 										</div>
 										<!-- Customer Email -->
 										<div class="col-md-4">
 											<label for="customerEmail" class="form-label">Customer Email</label>
-											<input type="email" class="form-control" id="customerEmail" name="customerEmail" />
+											<input type="email" class="form-control" id="customerEmail" name="customerEmail" maxlength="32" />
+										</div>
+										<!-- Calculation -->
+										<div class="col-md-4">
+											<label for="amount" class="form-label">Amount</label>
+											<input type="number" class="form-control" id="amount" readonly aria-readonly="true" disabled aria-disabled="true" />
 										</div>
 										<!-- Last Update Remark -->
 										<div class="col-12">
-											<label for="lastUpdateRemark" class="form-label">Last Update Remark</label>
-											<textarea class="form-control" id="lastUpdateRemark" name="lastUpdateRemark" rows="4" /></textarea>
+											<label for="productsOrComponents" class="form-label">Products / Components</label>
+											<textarea class="form-control" id="productsOrComponents" name="productsOrComponents" rows="4" maxlength="255"></textarea>
 										</div>
 										<!-- Order Received -->
 										 <!--
@@ -323,7 +371,6 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-primary">Understood</button>
 							</div>
 						</div>
 					</div>
@@ -345,14 +392,12 @@
 			}
 			pollForNotifications();
 		</script>
+		<div th:replace="~{fragments/toasts :: toasts}"></div>
 		<script th:inline="javascript" type="text/javascript" th:if="${message}">
 			/*<![CDATA[*/
 			// alert(/*[[${message}]]*/);
-			displayToast(/*[[${message}]]*/);
+			displayToast("Server", /*[[${message}]]*/);
 			/*]]>*/
 		</script>
-		<div class="row">
-			<div th:replace="~{fragments/toasts :: toasts}"></div>
-		</div>
 	</body>
 </html>

@@ -17,49 +17,49 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CRMInquiries {
 	@Id
-	@Column(name = "ID")
+	@Column(name = "ID", nullable = false, unique = true)
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name = "RECORDED_AT")
+	@Column(name = "RECORDED_AT", nullable = false)
 	private Date recordedAt;
 
-	@Column(name = "INSTITUTION")
+	@Column(name = "INSTITUTION", nullable = false, length = 64)
 	private String institution;
 
-	@Column(name = "PRODUCTS_OR_COMPONENTS")
+	@Column(name = "PRODUCTS_OR_COMPONENTS", length = 255)
 	private String productsOrComponents;
 
-	@Column(name = "QUANTITY")
+	@Column(name = "QUANTITY", nullable = false)
 	private Integer quantity;
 
-	@Column(name = "PRICE")
+	@Column(name = "PRICE", nullable = false)
 	private Double price;
 
-	@Column(name = "CUSTOMER_NAME")
+	@Column(name = "CUSTOMER_NAME", length = 32)
 	private String customerName;
 
-	@Column(name = "CUSTOMER_NUMBER")
+	@Column(name = "CUSTOMER_NUMBER", length = 16)
 	private String customerNumber;
 
-	@Column(name = "CUSTOMER_EMAIL")
+	@Column(name = "CUSTOMER_EMAIL", length = 32)
 	private String customerEmail;
 
-	@Column(name = "DUE_DATE")
+	@Column(name = "DUE_DATE", nullable = true)
 	private Date dueDate;
 
-	@Column(name = "SALESMAN_NAME")
+	@Column(name = "SALESMAN_NAME", nullable = false, length = 32)
 	private String salesmanName;
 
-	@Column(name = "LAST_UPDATE")
+	@Column(name = "LAST_UPDATE", nullable = false)
 	private Date lastUpdate;
 
-	@Column(name = "LAST_UPDATE_REMARKS")
+	@Column(name = "LAST_UPDATE_REMARKS", nullable = true, length = 32)
 	private String lastUpdateRemark;
 
-	@Column(name = "ORDER_RECEIVED")
+	@Column(name = "ORDER_RECEIVED", nullable = false)
 	private Boolean orderReceived;
 
-	@Column(name = "ORDER_COMPLETED")
+	@Column(name = "ORDER_COMPLETED", nullable = false)
 	private Boolean orderCompleted;
 }
