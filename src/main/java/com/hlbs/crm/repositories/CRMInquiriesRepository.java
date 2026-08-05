@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.hlbs.crm.entities.CRMInquiries;
 
 @Repository
-public interface CRMInquiriesRepositories extends JpaRepository<CRMInquiries, Long> {
+public interface CRMInquiriesRepository extends JpaRepository<CRMInquiries, Long> {
 	List<CRMInquiries> findAllByOrderByDueDateAsc();
 
 	@Query(value = "SELECT inquiries FROM CRMInquiries inquiries ORDER BY CASE WHEN inquiries.orderReceived = true AND inquiries.orderCompleted = true THEN 1 ELSE 0 END, inquiries.dueDate ASC", nativeQuery = false)

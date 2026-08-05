@@ -7,7 +7,7 @@ function displayToast(caption, body) {
 	toast.setAttribute("data-bs-delay", "5000");
 	const toastHeader = window.document.createElement("div");
 	toastHeader.classList.add("toast-header");
-	toastHeader.innerHTML += "<strong>" + caption + "</strong>";
+	toastHeader.innerHTML += "<strong class=\"me-auto\">" + caption + "</strong>";
 	const toastCloseButton = window.document.createElement("button");
 	toastCloseButton.type = "button";
 	toastCloseButton.classList.add("btn-close");

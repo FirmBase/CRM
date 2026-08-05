@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.hlbs.crm.controllers.NotificationController;
 import com.hlbs.crm.dtos.CRMInquiriesDTO;
 import com.hlbs.crm.entities.CRMInquiries;
-import com.hlbs.crm.repositories.CRMInquiriesRepositories;
+import com.hlbs.crm.repositories.CRMInquiriesRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,14 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CRMService {
 	@Autowired
-	private CRMInquiriesRepositories crmInquiriesRepositories;
+	private CRMInquiriesRepository crmInquiriesRepository;
 
 	@Autowired
 	private NotificationController notificationController;
 
 	public List<CRMInquiriesDTO>getAllInquiries() {
 		final List<CRMInquiriesDTO> crmInquiriesDTOs = new ArrayList<CRMInquiriesDTO>();
-		crmInquiriesRepositories.findAll().forEach(crmInquiry -> {
+		crmInquiriesRepository.findAll().forEach(crmInquiry -> {
 			final CRMInquiriesDTO crmInquiriesDTO = new CRMInquiriesDTO();
 			BeanUtils.copyProperties(crmInquiry, crmInquiriesDTO);
 			crmInquiriesDTOs.add(crmInquiriesDTO);
@@ -36,7 +36,7 @@ public class CRMService {
 
 	public List<CRMInquiriesDTO> getAllInquiriesByOrderByDueDateAsc() {
 		final List<CRMInquiriesDTO> crmInquiriesDTOs = new ArrayList<CRMInquiriesDTO>();
-		crmInquiriesRepositories.findAllByOrderByDueDateAsc().forEach(crmInquiry -> {
+		crmInquiriesRepository.findAllByOrderByDueDateAsc().forEach(crmInquiry -> {
 			final CRMInquiriesDTO crmInquiriesDTO = new CRMInquiriesDTO();
 			BeanUtils.copyProperties(crmInquiry, crmInquiriesDTO);
 			crmInquiriesDTOs.add(crmInquiriesDTO);
@@ -46,7 +46,7 @@ public class CRMService {
 
 	public List<CRMInquiriesDTO> getAllInquiryOrderByIncompleteDueDateAsc() {
 		final List<CRMInquiriesDTO> crmInquiriesDTOs = new ArrayList<CRMInquiriesDTO>();
-		crmInquiriesRepositories.getAllInquiryOrderByIncompleteDueDateAsc().forEach(crmInquiry -> {
+		crmInquiriesRepository.getAllInquiryOrderByIncompleteDueDateAsc().forEach(crmInquiry -> {
 			final CRMInquiriesDTO crmInquiriesDTO = new CRMInquiriesDTO();
 			BeanUtils.copyProperties(crmInquiry, crmInquiriesDTO);
 			crmInquiriesDTOs.add(crmInquiriesDTO);
@@ -56,7 +56,7 @@ public class CRMService {
 
 	public List<CRMInquiriesDTO> getAllIncompleteInquiryOrderByDueDateAsc() {
 		final List<CRMInquiriesDTO> crmInquiriesDTOs = new ArrayList<CRMInquiriesDTO>();
-		crmInquiriesRepositories.getAllIncompleteInquiryOrderByDueDateAsc().forEach(crmInquiry -> {
+		crmInquiriesRepository.getAllIncompleteInquiryOrderByDueDateAsc().forEach(crmInquiry -> {
 			final CRMInquiriesDTO crmInquiriesDTO = new CRMInquiriesDTO();
 			BeanUtils.copyProperties(crmInquiry, crmInquiriesDTO);
 			crmInquiriesDTOs.add(crmInquiriesDTO);
@@ -67,24 +67,24 @@ public class CRMService {
 	public void addNewInquiry(final CRMInquiriesDTO crmInquiriesDTO) {
 		final CRMInquiries crmInquiries = new CRMInquiries();
 		BeanUtils.copyProperties(crmInquiriesDTO, crmInquiries);
-		crmInquiriesRepositories.saveAndFlush(crmInquiries);
+		crmInquiriesRepository.saveAndFlush(crmInquiries);
 
 		notificationController.notifyClients("New inquiry added");
 	}
 
 	public void updateInquiry(final long inquiryId, final boolean inquiryOrderReceived, final boolean inquiryOrderCompleted, final String inquiryLastUpdateRemark) {
-		final CRMInquiries crmInquiries = crmInquiriesRepositories.findById(inquiryId).orElseThrow();
+		final CRMInquiries crmInquiries = crmInquiriesRepository.findById(inquiryId).orElseThrow();
 		crmInquiries.setOrderReceived(inquiryOrderReceived);
 		crmInquiries.setOrderCompleted(inquiryOrderCompleted);
 		crmInquiries.setLastUpdateRemark(inquiryLastUpdateRemark);
 		crmInquiries.setLastUpdate(new Date());
-		crmInquiriesRepositories.saveAndFlush(crmInquiries);
+		crmInquiriesRepository.saveAndFlush(crmInquiries);
 
 		notificationController.notifyClients("New inquiry added");
 	}
 
 	public void deleteInquiry(final long inquiryId) {
-		crmInquiriesRepositories.deleteById(inquiryId);
+		crmInquiriesRepository.deleteById(inquiryId);
 
 		notificationController.notifyClients("Inquiry " + inquiryId + " deleted.");
 	}

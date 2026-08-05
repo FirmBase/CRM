@@ -65,7 +65,7 @@
 				xhttp.onreadystatechange = function() {
 					if (this.readyState >= 4)
 						if (this.status == 200) {
-							console.log(this.responseText);
+							// console.log(this.responseText);
 							if (this.responseText == "true")
 								displayToast("Success", "Data updated.");
 							else
@@ -80,6 +80,7 @@
 		</script>
 	</head>
 	<body>
+		<th:block th:replace="~{fragments/navigation-bar :: navigation-bar}"></th:block>
 		<div class="container-fluid">
 			<!--
 			<div class="row">
@@ -261,7 +262,7 @@
 					<div class="modal-dialog modal-lg">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+								<h1 class="modal-title fs-5" id="staticBackdropLabel">New Lead</h1>
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">

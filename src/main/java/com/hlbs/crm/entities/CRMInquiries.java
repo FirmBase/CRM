@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CRMInquiries {
 	@Id
-	@Column(name = "ID", nullable = false, unique = true)
+	@Column(name = "ID", columnDefinition = "BIGINT UNSIGNED", nullable = false, unique = true)
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
