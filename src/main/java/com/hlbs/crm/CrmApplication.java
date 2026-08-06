@@ -22,7 +22,6 @@ public class CrmApplication {
 	@Bean
 	CommandLineRunner runner() {
 		return runner -> {
-			log.debug("Application started.");
 		};
 	}
 }
