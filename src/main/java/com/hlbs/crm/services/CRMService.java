@@ -82,7 +82,7 @@ public class CRMService {
 		crmInquiries.setLastUpdate(new Date());
 		crmInquiriesRepository.saveAndFlush(crmInquiries);
 
-		notificationController.notifyClients("New inquiry added");
+		notificationController.notifyClients("Inquiry status updated");
 	}
 
 	public void deleteInquiry(final long inquiryId) {
