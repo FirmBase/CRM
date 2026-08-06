@@ -22,7 +22,6 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(final HttpSecurity httpSecurity) {
 		return httpSecurity
 			.csrf(csrf -> csrf.disable())
-			.csrf(csrf -> csrf.disable())
 			.headers(headers -> headers
 				// .xssProtection(xss -> xss.disable())	// NEVER do this. Disabling XSS protection should never be in a real application.
 				.xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
@@ -43,19 +42,20 @@ public class WebSecurityConfig {
 			)
 			.authorizeHttpRequests(requests -> requests
 				.requestMatchers("/crm/**")
-				.hasAnyRole(UserRoleEnum.SALESMAN.name(), UserRoleEnum.ACCOUNTANT.name())
+				.hasAnyRole(UserRoleEnum.ADMIN.name(), UserRoleEnum.SALESMAN.name(), UserRoleEnum.ACCOUNTANT.name())
 			)
 			.authorizeHttpRequests(requests -> requests.anyRequest().authenticated())
 			.formLogin(form -> {
 				form
 				.loginPage("/users/login")
-				.defaultSuccessUrl("/")
+				.defaultSuccessUrl("/crm/home", true)
 				.failureUrl("/users/login?error=true")
 				.permitAll();
 			})
 			.rememberMe(Customizer.withDefaults())
 			.logout(logout -> {
 				logout
+				.logoutUrl("/users/logout")
 				.logoutSuccessUrl("/users/login")
 				.invalidateHttpSession(true)
 				.deleteCookies("CRM")

@@ -56,13 +56,23 @@ public class UsersService {
 	}
 
 	public List<UsersDTO> getAllUsersByActivity(final boolean isActive) {
-		final List<UsersDTO> userDTOs = new ArrayList<UsersDTO>();
+		final List<UsersDTO> usersDTOs = new ArrayList<UsersDTO>();
 		usersRepository.getAllUsersByActivity(isActive).forEach(user -> {
 			final UsersDTO usersDTO = new UsersDTO();
-			BeanUtils.copyProperties(user, userDTOs);
-			userDTOs.add(usersDTO);
+			BeanUtils.copyProperties(user, usersDTO);
+			usersDTOs.add(usersDTO);
 		});
-		return userDTOs;
+		return usersDTOs;
+	}
+
+	public List<UsersDTO> findAllByIsActive(final boolean isActive) {
+		final List<UsersDTO> usersDTOs = new ArrayList<UsersDTO>();
+		usersRepository.findAllByIsActive(isActive).forEach(user -> {
+			final UsersDTO usersDTO = new UsersDTO();
+			BeanUtils.copyProperties(user, usersDTO);
+			usersDTOs.add(usersDTO);
+		});
+		return usersDTOs;
 	}
 
 	public void addUser(final UsersDTO usersDTO) {

@@ -51,6 +51,9 @@ public class CRMInquiries {
 	@Column(name = "SALESMAN_NAME", nullable = false, length = 32)
 	private String salesmanName;
 
+	@Column(name = "SALESMAN_EMAIL", nullable = false, length = 32)
+	private String salesmanEmail;
+
 	@Column(name = "LAST_UPDATE", nullable = false)
 	private Date lastUpdate;
 

@@ -36,7 +36,7 @@ public class UsersController {
 
 	@GetMapping(path = "register")
 	public String registerUser(final Map<String, Object> attributes) {
-		attributes.put("roles", Arrays.stream(UserRoleEnum.values()).collect(Collectors.toList()));
+		attributes.put("roles", Arrays.stream(UserRoleEnum.values()).filter(userRoleEnum -> userRoleEnum != UserRoleEnum.ADMIN).collect(Collectors.toList()));
 		return "users/register";
 	}
 

@@ -18,25 +18,30 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.hlbs.crm.dtos.CRMInquiriesDTO;
 import com.hlbs.crm.services.CRMService;
+import com.hlbs.crm.services.UsersService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
-@RequestMapping(path = "/")
+@RequestMapping(path = "crm")
 @Slf4j
 public class CRMController {
 	@Autowired
 	private CRMService crmService;
 
-	@GetMapping(path = "")
+	@Autowired
+	private UsersService usersService;
+
+	@GetMapping(path = "home")
 	public String crmHome(final Map<String, Object> attributes) {
 		attributes.put("inquiries", crmService.getAllInquiryOrderByIncompleteDueDateAsc());
+		attributes.put("users", usersService.getAllUsersByActivity(true));
 		return "crm/home";
 	}
 
 	@PostMapping(path = "new")
-	public String crmHome(@RequestParam("dueDate") @DateTimeFormat(pattern = "yyyy-MM-dd") final Date dueDate, @RequestParam("institution") final String institution, @RequestParam("productsOrComponents") final String productsOrComponents, @RequestParam("quantity") final int quantity, @RequestParam("price") final double price, @RequestParam("salesmanName") final String salesmanName, @RequestParam("customerName") final String customerName, @RequestParam("customerNumber") final String customerNumber, @RequestParam("customerEmail") final String customerEmail, @RequestParam("lastUpdateRemark") final String lastUpdateRemark, final RedirectAttributes redirectAttributes) {
-		final CRMInquiriesDTO crmInquiriesDTO = new CRMInquiriesDTO(null, new Date(), institution, productsOrComponents, quantity, price, customerName, customerNumber, customerEmail, dueDate, salesmanName, new Date(), lastUpdateRemark, false, false);
+	public String crmHome(@RequestParam("dueDate") @DateTimeFormat(pattern = "yyyy-MM-dd") final Date dueDate, @RequestParam("institution") final String institution, @RequestParam("productsOrComponents") final String productsOrComponents, @RequestParam("quantity") final int quantity, @RequestParam("price") final double price, @RequestParam("salesmanName") final String salesmanName, @RequestParam("salesmanEmail") final String salesmanEmail, @RequestParam("customerName") final String customerName, @RequestParam("customerNumber") final String customerNumber, @RequestParam("customerEmail") final String customerEmail, @RequestParam("lastUpdateRemark") final String lastUpdateRemark, final RedirectAttributes redirectAttributes) {
+		final CRMInquiriesDTO crmInquiriesDTO = new CRMInquiriesDTO(null, new Date(), institution, productsOrComponents, quantity, price, customerName, customerNumber, customerEmail, dueDate, salesmanName, salesmanEmail, new Date(), lastUpdateRemark, false, false);
 
 		try {
 			crmService.addNewInquiry(crmInquiriesDTO);
@@ -45,7 +50,7 @@ public class CRMController {
 		catch (final DataAccessException dataAccessException) {
 			redirectAttributes.addFlashAttribute("message", "New inquiry fail");
 		}
-		return "redirect:/";
+		return "redirect:/crm/home";
 	}
 
 	@PostMapping(path = "update")
@@ -69,6 +74,6 @@ public class CRMController {
 		catch (final DataAccessException dataAccessException) {
 			redirectAttributes.addFlashAttribute("message", "Update fail");
 		}
-		return "redirect:/";
+		return "redirect:/crm/home";
 	}
 }

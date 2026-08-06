@@ -37,6 +37,8 @@ public class CRMInquiriesDTO {
 
 	private String salesmanName;
 
+	private String salesmanEmail;
+
 	private Date lastUpdate;
 
 	private String lastUpdateRemark;

@@ -220,7 +220,7 @@
 										<button type="button" class="btn m-0 p-0" onclick="addNew(this);">
 											<img th:src="@{/GoogleFonts/svg/upgrade_24dp_1F1F1F.svg}" alt="Update" />
 										</button>
-										<form action="delete" enctype="application/x-www-form-urlencoded" method="post">
+										<form th:action="@{delete}" enctype="application/x-www-form-urlencoded" method="post">
 											<input type="hidden" name="inquiry-id" th:value="${inquiry.id}" readonly aria-readonly="true" />
 											<button type="submit" class="btn m-0 p-0">
 												<img th:src="@{/GoogleFonts/svg/delete_24dp_1F1F1F.svg}" alt="Delete" />
@@ -266,7 +266,7 @@
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
-								<form id="crmInquiryForm" action="new" enctype="application/x-www-form-urlencoded" method="post" onsubmit="return checkInputs(this);">
+								<form id="crmInquiryForm" th:action="@{new}" enctype="application/x-www-form-urlencoded" method="post" onsubmit="return checkInputs(this);">
 									<input type="hidden" class="form-control" id="id" name="id" readonly aria-readonly="true" />
 									<div class="row g-3">
 										<!-- ID -->
@@ -301,27 +301,49 @@
 											<input type="text" class="form-control" id="institution" name="institution" maxlength="64" required aria-required="true" />
 										</div>
 										<!-- Products -->
-										<div class="col-md-6">
+										<div class="col-md-12">
 											<label for="lastUpdateRemark" class="form-label">Last Update Remark</label>
 											<input type="text" class="form-control" id="lastUpdateRemark" name="lastUpdateRemark" maxlength="32" />
 										</div>
 										<!-- Quantity -->
-										<div class="col-md-3">
+										<div class="col-md-4">
 											<label for="quantity" class="form-label">Quantity</label>
 											<input type="number" class="form-control" id="quantity" name="quantity" step="1" min="0" onkeypress="amountCalculation();" onblur="amountCalculation();" value="0" required aria-required="true" />
 										</div>
 										<!-- Price -->
-										<div class="col-md-3">
+										<div class="col-md-4">
 											<label for="price" class="form-label">Price</label>
 											<input type="number" class="form-control" id="price" name="price" step="0.01" min="0" onkeypress="amountCalculation();" onblur="amountCalculation();" value="0" required aria-required="true" />
+										</div>
+										<!-- Calculation -->
+										<div class="col-md-4">
+											<label for="amount" class="form-label">Amount</label>
+											<input type="number" class="form-control" id="amount" readonly aria-readonly="true" disabled aria-disabled="true" />
 										</div>
 										<!-- Salesman -->
 										<div class="col-md-6">
 											<label for="salesmanName" class="form-label">Salesman Name</label>
-											<input type="text" class="form-control" id="salesmanName" name="salesmanName" maxlength="32" required aria-required="true" />
+											<input type="text" class="form-control" id="salesmanName" list="salesman_name" name="salesmanName" maxlength="32" required aria-required="true" />
+											<datalist id="salesman_name">
+												<th:block th:each="user: ${users}">
+													<option th:value="${user.firstName + ' ' + user.middleName + ' ' + user.lastName}" th:text="${user.email}" th:if="${!user.middleName.isEmpty()}"></option>
+													<option th:value="${user.firstName + ' ' + user.lastName}" th:text="${user.email}" th:if="${user.middleName.isEmpty()}"></option>
+												</th:block>
+											</datalist>
+										</div>
+										<!-- Salesman -->
+										<div class="col-md-6">
+											<label for="salesmanEmail" class="form-label">Salesman Email</label>
+											<input type="email" class="form-control" id="salesmanEmail" list="salesman_email" name="salesmanEmail" maxlength="32" required aria-required="true" />
+											<datalist id="salesman_email">
+												<th:block th:each="user: ${users}">
+													<option th:value="${user.email}" th:text="${user.firstName + ' ' + user.middleName + ' ' + user.lastName}" th:if="${!user.middleName.isEmpty()}"></option>
+													<option th:value="${user.email}" th:text="${user.firstName + ' ' + user.lastName}" th:if="${user.middleName.isEmpty()}"></option>
+												</th:block>
+											</datalist>
 										</div>
 										<!-- Customer Name -->
-										<div class="col-md-6">
+										<div class="col-md-4">
 											<label for="customerName" class="form-label">Customer Name</label>
 											<input type="text" class="form-control" id="customerName" name="customerName" maxlength="32" />
 										</div>
@@ -334,11 +356,6 @@
 										<div class="col-md-4">
 											<label for="customerEmail" class="form-label">Customer Email</label>
 											<input type="email" class="form-control" id="customerEmail" name="customerEmail" maxlength="32" />
-										</div>
-										<!-- Calculation -->
-										<div class="col-md-4">
-											<label for="amount" class="form-label">Amount</label>
-											<input type="number" class="form-control" id="amount" readonly aria-readonly="true" disabled aria-disabled="true" />
 										</div>
 										<!-- Last Update Remark -->
 										<div class="col-12">
