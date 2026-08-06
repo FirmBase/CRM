@@ -200,12 +200,16 @@
 										<input class="form-check-input" type="checkbox" name="inquiry-order-received" value="" th:id="${'order_received_' + inquiry.id}" th:checked="${inquiry.orderReceived}" />
 										<label class="form-check-label m-0" th:for="${'order_received_' + inquiry.id}"><!-- Order received --></label>
 									</div>
+									<span th:if="${inquiry.orderReceived}" class="badge rounded-pill text-bg-primary">Received</span>
+									<span th:if="${!inquiry.orderReceived}" class="badge rounded-pill text-bg-secondary">Pending</span>
 								</td>
 								<td>
 									<div class="form-check">
 										<input class="form-check-input" type="checkbox" name="inquiry-order-completed" value="" th:id="${'order_completed_' + inquiry.id}" th:checked="${inquiry.orderCompleted}" />
 										<label class="form-check-label m-0" th:for="${'order_completed_' + inquiry.id}"><!-- Order completed --></label>
 									</div>
+									<span th:if="${inquiry.orderCompleted}" class="badge rounded-pill text-bg-success">Complete</span>
+									<span th:if="${!inquiry.orderCompleted}" class="badge rounded-pill text-bg-secondary">Pending</span>
 								</td>
 								<td th:text="${#dates.format(inquiry.lastUpdate, 'dd-MMM-yyyy')}"></td>
 								<td>
