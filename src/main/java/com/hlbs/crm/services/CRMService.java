@@ -75,6 +75,8 @@ public class CRMService {
 	public void updateInquiry(final long inquiryId, final boolean inquiryOrderReceived, final boolean inquiryOrderCompleted, final String inquiryLastUpdateRemark) {
 		final CRMInquiries crmInquiries = crmInquiriesRepository.findById(inquiryId).orElseThrow();
 		crmInquiries.setOrderReceived(inquiryOrderReceived);
+		if (inquiryOrderCompleted)
+			crmInquiries.setOrderReceived(true);
 		crmInquiries.setOrderCompleted(inquiryOrderCompleted);
 		crmInquiries.setLastUpdateRemark(inquiryLastUpdateRemark);
 		crmInquiries.setLastUpdate(new Date());

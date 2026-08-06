@@ -1,6 +1,7 @@
 package com.hlbs.crm.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,13 +17,17 @@ public class EmailService {
 	@Autowired
 	private JavaMailSender javaMailSender;
 
+	@Value("${spring.mail.username}")
+	private String senderEmail;
+
 	@Async
-	public void sendReminder(final Task task) throws MailException {
+	public void sendReminder(final String recipientEmail, final String emailSubject, final String emailBody) throws MailException {
 		final SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
-		simpleMailMessage.setTo("");
-		simpleMailMessage.setSubject("CRM - Action required.");
-		simpleMailMessage.setText("");
+		simpleMailMessage.setFrom(senderEmail);
+		simpleMailMessage.setTo(recipientEmail);
+		simpleMailMessage.setSubject(emailSubject);
+		simpleMailMessage.setText(emailBody);
 
 		javaMailSender.send(simpleMailMessage);
 	}

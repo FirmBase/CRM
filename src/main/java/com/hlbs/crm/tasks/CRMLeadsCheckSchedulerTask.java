@@ -11,7 +11,7 @@ public class CRMLeadsCheckSchedulerTask {
 	@Autowired
 	private CRMLeadsCheckSchedulerService crmLeadsCheckSchedulerService;
 
-	@Scheduled(fixedDelay = 10000)
+	@Scheduled(fixedDelay = 86400000, initialDelay = 1000)
 	public void checkLeadsRecords() {
 		crmLeadsCheckSchedulerService.checkLeadsRecords();
 	}
