@@ -107,7 +107,7 @@
 					<div class="row my-2">
 						<div class="offset-4 col-4">
 							<select class="form-select" aria-label="Select role" name="userRole" id="userRole" required aria-required="true">
-								<option disabled aria-disabled="true" selected>Select role</option>
+								<option disabled aria-disabled="true" value="" selected>Select role</option>
 								<th:block th:each="role: ${roles}">
 									<option th:value="${role}" th:text="${role}"></option>
 								</th:block>

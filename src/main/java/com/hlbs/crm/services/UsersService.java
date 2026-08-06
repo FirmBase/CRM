@@ -9,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.hlbs.crm.dtos.UserRoleDTO;
 import com.hlbs.crm.dtos.UsersDTO;
 import com.hlbs.crm.entities.Users;
 import com.hlbs.crm.enumerations.UserRoleEnum;
-import com.hlbs.crm.repositories.UserRoleRepository;
 import com.hlbs.crm.repositories.UsersRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,23 +23,10 @@ public class UsersService {
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
-	private UserRoleRepository userRoleRepository;
-
-	@Autowired
 	private UsersRepository usersRepository;
 
 	public Long getIdByEmail(final String email) {
 		return usersRepository.findByEmail(email).orElseThrow().getId();
-	}
-
-	public List<UserRoleDTO> getAllUserRole() {
-		final List<UserRoleDTO> userRoleDTOs = new ArrayList<UserRoleDTO>();
-		userRoleRepository.findAll().forEach(userRole -> {
-			final UserRoleDTO userRoleDTO = new UserRoleDTO();
-			BeanUtils.copyProperties(userRole, userRoleDTO);
-			userRoleDTOs.add(userRoleDTO);
-		});
-		return userRoleDTOs;
 	}
 
 	public List<UsersDTO> getAllUsers() {

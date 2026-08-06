@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Error</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+		<link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+		<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}" type="text/javascript" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+		<script th:src="@{/jQuery/js/jquery-4.0.0.min.js}" type="text/javascript" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+
+		<link th:href="@{/datatable/css/datatables.min.css}" rel="stylesheet" />
+		<script th:src="@{/datatable/js/datatables.min.js}" type="text/javascript"></script>
+
+		<link th:href="@{/css/table.css}" rel="stylesheet" />
+		<script th:src="@{/js/toasts-notification.js}" type="text/javascript"></script>
+	</head>
+	<body>
+		<th:block th:replace="~{fragments/navigation-bar :: navigation-bar}"></th:block>
+		<div class="container py-5">
+			<div class="row justify-content-center">
+				<div class="col-lg-7 col-md-9">
+					<div class="card shadow-lg border-0 rounded-4">
+						<div class="card-header bg-danger text-white text-center py-4 rounded-top-4">
+							<div style="font-size:60px;">⚠️</div>
+							<h1 class="fw-bold mb-0">Forbidden</h1>
+						</div>
+						<div class="card-body p-5">
+							<table class="table table-borderless align-middle">
+								<tr>
+									<th width="30%">Status</th>
+									<td>
+										<span class="badge bg-danger fs-6" th:text="${status}"></span>
+									</td>
+								</tr>
+								<tr>
+									<th>Error</th>
+									<td th:text="${error}"></td>
+								</tr>
+								<tr>
+									<th>Message</th>
+									<td class="text-muted" th:text="${message}"></td>
+								</tr>
+								<tr>
+									<th>Time</th>
+									<td th:text="${timestamp}">Timestamp</td>
+								</tr>
+							</table>
+							<hr class="my-4" />
+							<div class="text-center">
+								<a href="/" class="btn btn-primary px-4 me-2">🏠 Home</a>
+								<button onclick="window.history.back()" class="btn btn-outline-secondary px-4">← Go Back</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div th:replace="~{fragments/toasts :: toasts}"></div>
+		<script th:inline="javascript" type="text/javascript" th:if="${message}">
+			/*<![CDATA[*/
+			// alert(/*[[${message}]]*/);
+			displayToast("Error", /*[[${message}]]*/);
+			/*]]>*/
+		</script>
+	</body>
+</html>
