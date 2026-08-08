@@ -48,6 +48,7 @@ public class WebSecurityConfig {
 			.formLogin(form -> {
 				form
 				.loginPage("/users/login")
+				.loginProcessingUrl("/users/login")
 				.defaultSuccessUrl("/crm/home", true)
 				.failureUrl("/users/login?error=true")
 				.permitAll();
