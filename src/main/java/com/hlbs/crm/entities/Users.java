@@ -1,6 +1,7 @@
 package com.hlbs.crm.entities;
 
 import java.util.Date;
+import java.util.List;
 
 import com.hlbs.crm.enumerations.UserRoleEnum;
 
@@ -8,18 +9,18 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "USERS")
 @Slf4j
 public class Users {
 	@Id
@@ -27,7 +28,7 @@ public class Users {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name = "EMAIL", nullable = false, unique = true, length = 32)
+	@Column(name = "EMAIL", nullable = false, unique = true, length = 64)
 	private String email;
 
 	@Column(name = "PASSWORD", nullable = false, length = 64)
@@ -42,12 +43,6 @@ public class Users {
 	@Column(name = "LAST_NAME", nullable = false, length = 16)
 	private String lastName;
 
-	/*
-	@ManyToOne
-	@JoinColumn(name = "USER_ROLE", referencedColumnName = "ID", nullable = false)
-	private UserRole userRole;
-	*/
-
 	@Column(name = "ROLE", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private UserRoleEnum userRole;
@@ -57,4 +52,7 @@ public class Users {
 
 	@Column(name = "IS_ACTIVE", nullable = false)
 	private Boolean isActive;
+
+	@OneToMany(mappedBy = "email", fetch = FetchType.LAZY)
+	private List<UserPasswordPasscode> userPasswordPasscodes;
 }

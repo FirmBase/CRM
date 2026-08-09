@@ -290,7 +290,7 @@
 										<!-- Due Date -->
 										<div class="col-md-3">
 											<label for="dueDate" class="form-label">Due Date</label>
-											<input type="date" class="form-control" id="dueDate" name="dueDate" oninput="dueDateCheck(this);" />
+											<input type="date" class="form-control" id="dueDate" name="dueDate" oninput="dueDateCheck(this);" required aria-required="true" />
 										</div>
 										<!-- Last Update -->
 										<!--
@@ -327,22 +327,22 @@
 										<!-- Salesman -->
 										<div class="col-md-6">
 											<label for="salesmanName" class="form-label">Salesman Name</label>
-											<input type="text" class="form-control" id="salesmanName" list="salesman_name" name="salesmanName" maxlength="32" required aria-required="true" />
+											<input type="text" class="form-control" id="salesmanName" list="salesman_name" name="salesmanName" maxlength="32" required aria-required="true" th:value="${salesman_name}" />
 											<datalist id="salesman_name">
 												<th:block th:each="user: ${users}">
-													<option th:value="${user.firstName + ' ' + user.middleName + ' ' + user.lastName}" th:text="${user.email}" th:if="${!user.middleName.isEmpty()}"></option>
-													<option th:value="${user.firstName + ' ' + user.lastName}" th:text="${user.email}" th:if="${user.middleName.isEmpty()}"></option>
+													<option th:value="${user.firstName + ' ' + user.middleName + ' ' + user.lastName}" th:text="${user.email}" th:if="${user.middleName != null}"></option>
+													<option th:value="${user.firstName + ' ' + user.lastName}" th:text="${user.email}" th:if="${user.middleName == null}"></option>
 												</th:block>
 											</datalist>
 										</div>
 										<!-- Salesman -->
 										<div class="col-md-6">
 											<label for="salesmanEmail" class="form-label">Salesman Email</label>
-											<input type="email" class="form-control" id="salesmanEmail" list="salesman_email" name="salesmanEmail" maxlength="32" required aria-required="true" />
+											<input type="email" class="form-control" id="salesmanEmail" list="salesman_email" name="salesmanEmail" maxlength="32" required aria-required="true" th:value="${salesman_email}" />
 											<datalist id="salesman_email">
 												<th:block th:each="user: ${users}">
-													<option th:value="${user.email}" th:text="${user.firstName + ' ' + user.middleName + ' ' + user.lastName}" th:if="${!user.middleName.isEmpty()}"></option>
-													<option th:value="${user.email}" th:text="${user.firstName + ' ' + user.lastName}" th:if="${user.middleName.isEmpty()}"></option>
+													<option th:value="${user.email}" th:text="${user.firstName + ' ' + user.middleName + ' ' + user.lastName}" th:if="${user.middleName != null}"></option>
+													<option th:value="${user.email}" th:text="${user.firstName + ' ' + user.lastName}" th:if="${user.middleName == null}"></option>
 												</th:block>
 											</datalist>
 										</div>

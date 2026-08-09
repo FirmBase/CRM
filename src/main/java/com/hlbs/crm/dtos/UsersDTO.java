@@ -1,6 +1,7 @@
 package com.hlbs.crm.dtos;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +31,8 @@ public class UsersDTO {
 
 	private Boolean isActive;
 
+	private List<UserPasswordPasscodeDTO> userPasswordPasscodeDTOs;
+
 	@Override
 	public String toString() {
 		try {
@@ -38,6 +41,6 @@ public class UsersDTO {
 		catch (JsonProcessingException jsonProcessingException) {
 			jsonProcessingException.printStackTrace();
 		}
-		return "";
+		return super.toString();
 	}
 }

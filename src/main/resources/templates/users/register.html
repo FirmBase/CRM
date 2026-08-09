@@ -59,53 +59,64 @@
 				<div class="row">
 					<h1 class="h1 text-center p-5 text-black m-0 p-0">Register</h1>
 				</div>
-				<form action="" enctype="application/x-www-form-urlencoded" method="post" onsubmit="return checkForSubmission(this);">
-					<div class="row my-2">
-						<div class="offset-3 col-2">
+				<form th:action="@{register}" enctype="application/x-www-form-urlencoded" method="post" onsubmit="return checkForSubmission(this);">
+					<div class="row my-1" th:if="${name_display}">
+						<div class="col-4">
 							<div class="form-floating">
-								<input type="text" class="form-control" name="firstName" id="firstName" minlength="2" maxlength="16" placeholder="First name" aria-placeholder="First name" required aria-required="true" />
+								<input type="text" class="form-control" name="firstName" id="firstName" minlength="2" maxlength="16" placeholder="First name" aria-placeholder="First name" required aria-required="true" th:value="${first_name_value}" />
 								<label for="firstName">First name</label>
 							</div>
 						</div>
-						<div class="col-2">
+						<div class="col-4">
 							<div class="form-floating">
-								<input type="text" class="form-control" name="middleName" id="middleName" maxlength="16" placeholder="Middle name" aria-placeholder="Middle name" aria-required="false" />
+								<input type="text" class="form-control" name="middleName" id="middleName" maxlength="16" placeholder="Middle name" aria-placeholder="Middle name" aria-required="false" th:value="${middle_name_value}" />
 								<label for="middleName">Middle name</label>
 							</div>
 						</div>
-						<div class="col-2">
+						<div class="col-4">
 							<div class="form-floating">
-								<input type="text" class="form-control" name="lastName" id="lastName" minlength="2" maxlength="16" placeholder="Last name" aria-placeholder="Last name" required aria-required="true" />
+								<input type="text" class="form-control" name="lastName" id="lastName" minlength="2" maxlength="16" placeholder="Last name" aria-placeholder="Last name" required aria-required="true" th:value="${last_name_value}" />
 								<label for="lastName">Last name</label>
 							</div>
 						</div>
 					</div>
-					<div class="row my-2">
+					<div class="row my-1">
 						<div class="offset-4 col-4">
 							<div class="form-floating">
-								<input type="email" class="form-control" name="email" id="email" minlength="4" maxlength="32" placeholder="E-Mail" aria-placeholder="E-Mail" required aria-required="true" onblur="emailAvailability(this);" />
+								<input th:readonly="${email_readonly}" type="email" class="form-control" name="email" id="email" minlength="4" maxlength="32" placeholder="E-Mail" aria-placeholder="E-Mail" required aria-required="true" onblur="emailAvailability(this);" th:value="${email_value}" />
 								<label for="email">E-Mail</label>
 							</div>
 						</div>
 					</div>
-					<div class="row my-2">
-						<div class="offset-4 col-4">
+					<div class="row my-1" th:if="${passcode_display}">
+						<div class="offset-4 col-2">
+							<div class="form-floating">
+								<input th:readonly="${passcode_readonly}" type="text" class="form-control" name="passcode" id="passcode" minlength="8" maxlength="8" placeholder="Passcode" aria-placeholder="Passcode" required aria-required="true" th:value="${passcode_value}" />
+								<label for="confirm_password">Passcode</label>
+							</div>
+						</div>
+						<div class="offset col-2">
+							<button th:disabled="${not #strings.isEmpty(passcode)}" type="submit" id="sendPasscode" class="btn btn-sm btn-info w-100 h-100">Send passcode</button>
+						</div>
+					</div>
+					<div class="row my-1">
+						<div class="offset-4 col-4" th:if="${password_display}">
 							<div class="form-floating">
 								<input type="password" class="form-control" name="password" id="password" minlength="4" maxlength="16" placeholder="Password" aria-placeholder="Password" required aria-required="true" />
 								<label for="password">Password</label>
 							</div>
 						</div>
 					</div>
-					<div class="row my-2">
-						<div class="offset-4 col-4">
+					<div class="row my-1">
+						<div class="offset-4 col-4" th:if="${password_display}">
 							<div class="form-floating">
 								<input type="password" class="form-control" name="confirm-password" id="confirm_password" minlength="4" maxlength="16" placeholder="Confirm password" aria-placeholder="Confirm password" required aria-required="true" />
 								<label for="confirm_password">Confirm password</label>
 							</div>
 						</div>
 					</div>
-					<div class="row my-2">
-						<div class="offset-4 col-4">
+					<div class="row my-1">
+						<div class="offset-4 col-4" th:if="${role_display}">
 							<select class="form-select" aria-label="Select role" name="userRole" id="userRole" required aria-required="true">
 								<option disabled aria-disabled="true" value="" selected>Select role</option>
 								<th:block th:each="role: ${roles}">
@@ -114,11 +125,11 @@
 							</select>
 						</div>
 					</div>
-					<div class="row my-2">
-						<div class="offset-5 col-1">
+					<div class="row my-1">
+						<div class="offset-4 col-2" th:if="${register_display}">
 							<button type="submit" id="register" class="btn btn-primary w-100">Register</button>
 						</div>
-						<div class="col-1">
+						<div class="col-2" th:if="${register_display}">
 							<a href="login">
 								<button type="button" class="btn btn-outline-success w-100">Login</button>
 							</a>

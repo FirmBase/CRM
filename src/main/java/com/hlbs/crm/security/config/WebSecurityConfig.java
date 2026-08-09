@@ -34,7 +34,7 @@ public class WebSecurityConfig {
 				// .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self';"))
 			)
 			.authorizeHttpRequests(requests -> requests
-				.requestMatchers("/users/register", "/users/email-available", "/css/**", "/js/**", "/bootstrap/css/*", "/bootstrap/js/*", "/jQuery/js/*", "/datatable/css/*", "/datatable/js/*", "/GoogleFonts/svg/*").permitAll()
+				.requestMatchers("/users/register", "/error", "/users/email-available", "/css/**", "/js/**", "/bootstrap/css/*", "/bootstrap/js/*", "/jQuery/js/*", "/datatable/css/*", "/datatable/js/*", "/GoogleFonts/svg/*").permitAll()
 			)
 			.authorizeHttpRequests(requests -> requests
 				.requestMatchers("/users/manage/**")

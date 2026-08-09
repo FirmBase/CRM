@@ -10,11 +10,11 @@ import com.hlbs.crm.entities.CRMInquiries;
 
 @Repository
 public interface CRMInquiriesRepository extends JpaRepository<CRMInquiries, Long> {
-	List<CRMInquiries> findAllByOrderByDueDateAsc();
+	public List<CRMInquiries> findAllByOrderByDueDateAsc();
 
 	@Query(value = "SELECT inquiries FROM CRMInquiries inquiries ORDER BY CASE WHEN inquiries.orderReceived = true AND inquiries.orderCompleted = true THEN 1 ELSE 0 END, inquiries.dueDate ASC", nativeQuery = false)
-	List<CRMInquiries> getAllInquiryOrderByIncompleteDueDateAsc();
+	public List<CRMInquiries> getAllInquiryOrderByIncompleteDueDateAsc();
 
 	@Query(value = "SELECT inquiries FROM CRMInquiries inquiries WHERE inquiries.orderReceived = false AND inquiries.orderCompleted = false ORDER BY inquiries.dueDate ASC", nativeQuery = false)
-	List<CRMInquiries> getAllIncompleteInquiryOrderByDueDateAsc();
+	public List<CRMInquiries> getAllIncompleteInquiryOrderByDueDateAsc();
 }

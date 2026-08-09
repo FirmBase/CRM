@@ -1,5 +1,6 @@
 package com.hlbs.crm.controllers;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.hlbs.crm.dtos.CRMInquiriesDTO;
+import com.hlbs.crm.dtos.UsersDTO;
 import com.hlbs.crm.services.CRMService;
 import com.hlbs.crm.services.UsersService;
 
@@ -33,9 +35,12 @@ public class CRMController {
 	private UsersService usersService;
 
 	@GetMapping(path = "home")
-	public String crmHome(final Map<String, Object> attributes) {
+	public String crmHome(final Map<String, Object> attributes, final Principal principal) {
 		attributes.put("inquiries", crmService.getAllInquiryOrderByIncompleteDueDateAsc());
 		attributes.put("users", usersService.getAllUsersByActivity(true));
+		final UsersDTO usersDTO = usersService.getByEmail(principal.getName());
+		attributes.put("salesman_name", usersDTO.getMiddleName() == null ? usersDTO.getFirstName() + " " + usersDTO.getLastName() : usersDTO.getFirstName() + " " + usersDTO.getMiddleName() + " " + usersDTO.getLastName());
+		attributes.put("salesman_email", usersDTO.getEmail());
 		return "crm/home";
 	}
 

@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Entity
-@Table(name = "crm_inquiries")
+@Table(name = "CRM_INQUIRIES")
 @Slf4j
 public class CRMInquiries {
 	@Id
@@ -45,7 +45,7 @@ public class CRMInquiries {
 	@Column(name = "CUSTOMER_EMAIL", length = 32)
 	private String customerEmail;
 
-	@Column(name = "DUE_DATE", nullable = true)
+	@Column(name = "DUE_DATE", nullable = false)
 	private Date dueDate;
 
 	@Column(name = "SALESMAN_NAME", nullable = false, length = 32)

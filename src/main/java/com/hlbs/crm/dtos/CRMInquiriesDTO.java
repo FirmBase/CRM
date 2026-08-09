@@ -55,6 +55,6 @@ public class CRMInquiriesDTO {
 		catch (JsonProcessingException jsonProcessingException) {
 			jsonProcessingException.printStackTrace();
 		}
-		return "";
+		return super.toString();
 	}
 }

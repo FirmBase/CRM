@@ -3,7 +3,9 @@ package com.hlbs.crm.controllers;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,15 +38,80 @@ public class UsersController {
 
 	@GetMapping(path = "register")
 	public String registerUser(final Map<String, Object> attributes) {
-		attributes.put("roles", Arrays.stream(UserRoleEnum.values()).filter(userRoleEnum -> userRoleEnum != UserRoleEnum.ADMIN).collect(Collectors.toList()));
+		// attributes.put("roles", Arrays.stream(UserRoleEnum.values()).filter(userRoleEnum -> userRoleEnum != UserRoleEnum.ADMIN).collect(Collectors.toList()));
+		attributes.put("name_display", true);
+		attributes.put("first_name_value", "");
+		attributes.put("middle_name_value", "");
+		attributes.put("last_name_value", "");
+		attributes.put("email_display", true);
+		attributes.put("email_readonly", false);
+		attributes.put("email_value", "");
+		attributes.put("passcode_display", false);
+		attributes.put("passcode_value", "");
+		attributes.put("passcode_readonly", false);
+		attributes.put("password_display", false);
+		attributes.put("role_display", false);
+		attributes.put("register_display", true);
 		return "users/register";
 	}
 
 	@PostMapping(path = "register")
-	public String registerUser(@ModelAttribute final UsersDTO usersDTO, final RedirectAttributes redirectAttributes) {
-		usersService.addUser(usersDTO);
-		redirectAttributes.addFlashAttribute("message", "Login here!");
-		return "redirect:/users/login";
+	public String registerUser(@ModelAttribute final UsersDTO usersDTO, @RequestParam(name = "passcode", required = false) final String passcode, final Map<String, Object> attributes, final RedirectAttributes redirectAttributes) {
+		if (passcode == null) {
+			usersService.generatePasswordPasscode(usersDTO.getEmail());
+			attributes.put("message", "Passcode is sent to your e-mail.");
+			attributes.put("name_display", true);
+			attributes.put("first_name_value", usersDTO.getFirstName());
+			attributes.put("middle_name_value", usersDTO.getMiddleName());
+			attributes.put("last_name_value", usersDTO.getLastName());
+			attributes.put("email_display", false);
+			attributes.put("email_readonly", true);
+			attributes.put("email_value", usersDTO.getEmail());
+			attributes.put("passcode_display", true);
+			attributes.put("passcode_value", "");
+			attributes.put("passcode_readonly", false);
+			attributes.put("password_display", false);
+			attributes.put("role_display", false);
+			attributes.put("register_display", false);
+			return "users/register";
+		}
+		else {
+			if (Stream.of(usersDTO.getFirstName(), usersDTO.getLastName(), usersDTO.getEmail(), usersDTO.getPassword(), usersDTO.getUserRole()).allMatch(Objects::nonNull))
+				if (usersService.verifyPasswordPasscode(usersDTO.getEmail(), passcode)) {
+					usersService.addUser(usersDTO);
+					redirectAttributes.addFlashAttribute("message", "Registration successful, signin");
+					return "redirect:/users/login";
+				}
+				else {
+					redirectAttributes.addFlashAttribute("message", "Email verification failed.");
+					return "redirect:/users/register";
+				}
+			else
+				if (usersService.verifyPasswordPasscode(usersDTO.getEmail(), passcode)) {
+					attributes.put("roles", Arrays.stream(UserRoleEnum.values()).filter(userRoleEnum -> userRoleEnum != UserRoleEnum.ADMIN).collect(Collectors.toList()));
+					attributes.put("name_display", true);
+					attributes.put("first_name_value", usersDTO.getFirstName());
+					attributes.put("middle_name_value", usersDTO.getMiddleName());
+					attributes.put("last_name_value", usersDTO.getLastName());
+					attributes.put("email_display", true);
+					attributes.put("email_readonly", false);
+					attributes.put("email_value", usersDTO.getEmail());
+					attributes.put("passcode_display", true);
+					attributes.put("passcode_value", passcode);
+					attributes.put("passcode_readonly", true);
+					attributes.put("password_display", true);
+					attributes.put("role_display", true);
+					attributes.put("register_display", true);
+					return "users/register";
+				}
+				else {
+					redirectAttributes.addFlashAttribute("message", "Email verification failed.");
+					return "redirect:/users/register";
+				}
+		}
+		// usersService.addUser(usersDTO);
+		// redirectAttributes.addFlashAttribute("message", "Login here!");
+		// return "redirect:/users/login";
 	}
 
 	@GetMapping(path = "manage")
