@@ -105,12 +105,24 @@ public class UsersService {
 	}
 
 	public boolean verifyPasswordPasscode(final String email, final String passcode) {
-		Optional<UserPasswordPasscode> userPasswordPasscodeOptional = userPasswordPasscodeRepository.findByEmail(email);
+		final Optional<UserPasswordPasscode> userPasswordPasscodeOptional = userPasswordPasscodeRepository.findByEmail(email);
 		if (userPasswordPasscodeOptional.isPresent())
 			if (userPasswordPasscodeOptional.get().getPasscode().equals(passcode))
 				if (new Date().compareTo(userPasswordPasscodeOptional.get().getExpiry()) <= 0)
 					return true;
 		return false;
+	}
+
+	public boolean changePassword(final String email, final String password) {
+		final Optional<Users> userOptional = usersRepository.findByEmail(email);
+		if (userOptional.isEmpty())
+			return false;
+		else {
+			final Users user = userOptional.get();
+			user.setPassword(passwordEncoder.encode(password));
+			usersRepository.save(user);
+			return true;
+		}
 	}
 
 	public void generatePasswordPasscode(final String email) {

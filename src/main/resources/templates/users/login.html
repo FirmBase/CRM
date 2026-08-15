@@ -26,7 +26,6 @@
 				</div>
 				<form th:action="@{login}" enctype="application/x-www-form-urlencoded" method="post">
 					<div class="row my-2">
-					<div class="row my-2">
 						<div class="offset-4 col-4">
 							<div class="form-floating">
 								<input type="email" class="form-control" name="username" id="email" minlength="4" maxlength="32" placeholder="E-Mail" aria-placeholder="E-Mail" required aria-required="true" />
@@ -53,6 +52,14 @@
 						</div>
 					</div>
 				</form>
+				<div class="row my-2">
+					<hr class="border-primary" />
+					<div class="offset-5 col-2">
+						<a href="reset-password">
+							<button type="button" class="btn btn-sm btn-danger w-100">Reset password</button>
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div th:replace="~{fragments/toasts :: toasts}"></div>

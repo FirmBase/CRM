@@ -114,6 +114,57 @@ public class UsersController {
 		// return "redirect:/users/login";
 	}
 
+	@GetMapping(path = "reset-password")
+	public String resetPassword(final Map<String, Object> attributes) {
+		attributes.put("email_display", true);
+		attributes.put("email_readonly", false);
+		attributes.put("email_value", "");
+		attributes.put("passcode_display", false);
+		attributes.put("passcode_value", "");
+		attributes.put("passcode_readonly", false);
+		attributes.put("password_display", false);
+		attributes.put("register_display", true);
+		return "users/reset_password";
+	}
+
+	@PostMapping(path = "reset-password")
+	public String resetPassword(@ModelAttribute final UsersDTO usersDTO, @RequestParam(name = "passcode", required = false) final String passcode, final Map<String, Object> attributes, final RedirectAttributes redirectAttributes) {
+		if (passcode == null) {
+			usersService.generatePasswordPasscode(usersDTO.getEmail());
+			attributes.put("email_display", true);
+			attributes.put("email_readonly", true);
+			attributes.put("email_value", usersDTO.getEmail());
+			attributes.put("passcode_display", true);
+			attributes.put("passcode_value", passcode);
+			attributes.put("passcode_readonly", false);
+			attributes.put("password_display", false);
+			attributes.put("register_display", false);
+			attributes.put("message", "Passcode sent to email");
+			return "users/reset_password";
+		}
+		else if ((usersDTO.getPassword() != null) && (!usersDTO.getPassword().isEmpty())) {
+			if (usersService.verifyPasswordPasscode(usersDTO.getEmail(), passcode))
+				if (usersService.changePassword(usersDTO.getEmail(), usersDTO.getPassword()))
+					redirectAttributes.addFlashAttribute("message", "Password changed");
+				else
+					redirectAttributes.addFlashAttribute("message", "Password change failed");
+			else
+				redirectAttributes.addFlashAttribute("message", "Passcode verification failed");
+			return "redirect:/users/login";
+		}
+		else {
+			attributes.put("email_display", true);
+			attributes.put("email_readonly", true);
+			attributes.put("email_value", usersDTO.getEmail());
+			attributes.put("passcode_display", true);
+			attributes.put("passcode_value", passcode);
+			attributes.put("passcode_readonly", true);
+			attributes.put("password_display", true);
+			attributes.put("register_display", true);
+			return "users/reset_password";
+		}
+	}
+
 	@GetMapping(path = "manage")
 	public String allUsers(final Map<String, Object> attributes, final Principal principal) {
 		attributes.put("users", usersService.getAllUsers().stream().filter(role -> role.getId() != usersService.getIdByEmail(principal.getName())).collect(Collectors.toList()));
